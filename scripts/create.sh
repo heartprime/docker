@@ -37,16 +37,9 @@ if [[ $# -eq 3 ]]; then
     overwrite=true
 fi
 
-if [[ ! "$image" =~ ^[a-z0-9]+([._-][a-z0-9]+)*$ ]]; then
-    die "Invalid image name: $image" 2
-fi
-
-if (( ${#tag} > 128 )) || [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9._-]*$ ]]; then
-    die "Invalid tag: $tag" 2
-fi
-
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_dir="$(cd "$script_dir/.." && pwd)"
+valid_script="$script_dir/valid.sh"
 exists_script="$script_dir/exists.sh"
 dockerfile="$repo_dir/dockerfiles/$image/$tag.Dockerfile"
 destination="heartprime/$image:$tag"
@@ -72,6 +65,12 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
+
+if [[ ! -x "$valid_script" ]]; then
+    die "Image validation check is not executable: $valid_script"
+fi
+
+"$valid_script" "$image" "$tag"
 
 if [[ ! -x "$exists_script" ]]; then
     die "Image existence check is not executable: $exists_script"
