@@ -6,7 +6,7 @@ Docker Hub namespace.
 
 ## Available images and tags
 
-| Image | Tag | DockerHub |
+| Image | Tag | Docker Hub |
 | --- | --- | --- |
 | `cuda` | `v1` | `heartprime/cuda:v1` |
 
@@ -21,7 +21,7 @@ Before creating an image, make sure:
 - Your Docker Hub account has permission to push to the `heartprime` namespace
   if the image needs to be built and published.
 
-### Login to Docker Hub
+### Log in to Docker Hub
 
 Log in with a Docker Hub account that has access to the `heartprime` namespace:
 
