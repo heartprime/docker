@@ -6,7 +6,7 @@ Docker Hub namespace.
 
 ## Available images and tags
 
-| Image | Tag | Docker Hub |
+| Image | Tag | Image Name |
 | --- | --- | --- |
 | `cuda` | `v1` | `heartprime/cuda:v1` |
 
