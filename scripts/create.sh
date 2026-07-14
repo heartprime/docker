@@ -6,9 +6,8 @@
 #   ./create.sh <image> <tag>
 #   ./create.sh <image> <tag> --overwrite
 #
-# If the tagged image exists, it is built and pushed. If it does not exist,
-# --overwrite builds and pushes it; without --overwrite, it is pulled from the
-# registry instead.
+# If the tagged image exists, it is pulled unless --overwrite is specified. If
+# it does not exist, it is built and pushed.
 
 set -euo pipefail
 
@@ -86,7 +85,7 @@ else
     image_exists=false
 fi
 
-if [[ "$image_exists" == false && "$overwrite" == false ]]; then
+if [[ "$image_exists" == true && "$overwrite" == false ]]; then
     printf 'Pulling %s from Docker Hub...\n' "$destination"
     docker pull "$destination"
     exit 0
