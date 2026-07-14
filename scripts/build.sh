@@ -28,7 +28,8 @@ if (( ${#tag} > 128 )) || [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9._-]*$ ]]; then
 fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-dockerfile="$script_dir/$image/$tag.Dockerfile"
+repo_dir="$(cd "$script_dir/.." && pwd)"
+dockerfile="$repo_dir/dockerfiles/$image/$tag.Dockerfile"
 destination="heartprime/$image:$tag"
 builder_name="heartprime-build-$$-$RANDOM"
 builder_created=false
@@ -86,4 +87,4 @@ docker buildx build \
     --file "$dockerfile" \
     --tag "$destination" \
     --push \
-    "$script_dir"
+    "$repo_dir"

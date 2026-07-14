@@ -30,25 +30,27 @@ Change to the root of this repository before running the build script:
 
 ```bash
 cd /path/to/docker
-./build-and-push.sh <image> <tag>
+./scripts/build.sh <image> <tag>
 ```
 
 For example:
 
 ```bash
-./build-and-push.sh cuda v1
+./scripts/build.sh cuda v1
 ```
 
 The script builds the image for the Docker engine's native platform and pushes
-it to Docker Hub. In the example above, it uses `cuda/v1.Dockerfile` and
-pushes the resulting image as `heartprime/cuda:v1`.
+it to Docker Hub. In the example above, it uses
+`dockerfiles/cuda/v1.Dockerfile` and pushes the resulting image as
+`heartprime/cuda:v1`.
 
 ## Repository layout
 
-Dockerfiles are organized by image and tag:
+The build script and Dockerfiles are organized as follows:
 
 ```text
-<image>/<tag>.Dockerfile
+scripts/build.sh
+dockerfiles/<image>/<tag>.Dockerfile
 ```
 
 The currently available image and tag are:
