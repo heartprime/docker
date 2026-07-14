@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM python:3.11-slim-bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -14,17 +14,14 @@ RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
         ca-certificates \
         git \
-        python3 \
-        python3-pip \
-        python3-venv \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/venv \
-    && python3 -m pip install --upgrade pip setuptools wheel \
-    && python3 -m pip install \
+    && /opt/venv/bin/python -m pip install --upgrade pip setuptools wheel \
+    && /opt/venv/bin/python -m pip install \
         torch==2.13.0+cu126 \
         --index-url https://download.pytorch.org/whl/cu126 \
-    && python3 -m pip install \
+    && /opt/venv/bin/python -m pip install \
         datajoint[postgres]==2.3.0 \
         graphviz==0.21 \
         jupyterlab==4.6.1 \
