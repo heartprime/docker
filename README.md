@@ -47,7 +47,7 @@ Images are pulled or built for the Docker engine's native Linux platform.
 
 ## Log In for Push Access
 
-Publishing or replacing an image requires push access to the corresponding
+Publishing an image requires push access to the corresponding
 HeartPrime repository. Log in with an authorized Docker Hub account:
 
 ```bash
