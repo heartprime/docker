@@ -37,9 +37,9 @@ depending on its availability and your Docker Hub access. After it finishes,
 
 | Command | Image state | Result | Push access required? |
 | --- | --- | --- | --- |
-| `./scripts/get.sh <image> <tag>` | Published | Pulls the image | No |
-| `./scripts/get.sh <image> <tag>` | Unpublished | Builds and publishes the image | Yes |
-| `./scripts/get.sh <image> <tag> --rebuild` | Any | Rebuilds and publishes the image | Yes |
+| <nobr>`./scripts/get.sh <image> <tag>`</nobr> | Published | Pulls the image | No |
+| <nobr>`./scripts/get.sh <image> <tag>`</nobr> | Unpublished | Builds and publishes the image | Yes |
+| <nobr>`./scripts/get.sh <image> <tag> --rebuild`</nobr> | Any | Rebuilds and publishes the image | Yes |
 
 Images are pulled or built for the Docker engine's native Linux platform.
 
