@@ -14,8 +14,8 @@ usage() {
     printf 'Usage: %s <image>\n' "${0##*/}" >&2
 }
 
-fail() {
-    printf '%s\n' "$1" >&2
+die() {
+    printf 'Error: %s\n' "$1" >&2
     exit "${2:-1}"
 }
 
@@ -30,65 +30,86 @@ registry="https://index.docker.io/v1/"
 docker_config="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
 
 if [[ ! "$image" =~ ^[a-z0-9]+([._-][a-z0-9]+)*$ ]]; then
-    fail "Error: Invalid image name: $image" 2
+    die "Invalid image name: $image" 2
 fi
 
 for command in curl jq; do
     command -v "$command" >/dev/null 2>&1 || \
-        fail "Error: $command is required to check Docker Hub access." 3
+        die "$command is required to check Docker Hub access." 3
 done
 
 if [[ ! -r "$docker_config" ]]; then
-    fail "Docker Hub credentials are not configured; run docker login."
+    die "Docker Hub credentials are not configured; run docker login."
 fi
 
-helper="$(
+if ! credential_source="$(
     jq -r --arg registry "$registry" \
         '
-            .credHelpers[$registry]
-            // .credHelpers["registry-1.docker.io"]
-            // .credHelpers["docker.io"]
-            // .credsStore
-            // empty
+            [
+                [$registry, .credHelpers[$registry]],
+                ["registry-1.docker.io", .credHelpers["registry-1.docker.io"]],
+                ["docker.io", .credHelpers["docker.io"]],
+                [$registry, .credsStore]
+            ]
+            | map(select(.[1] | type == "string" and length > 0))
+            | first // empty
+            | @tsv
         ' \
         "$docker_config"
-)" || fail "Error: unable to read $docker_config." 3
+)"; then
+    die "Unable to read Docker configuration: $docker_config" 3
+fi
 
-if [[ -n "$helper" ]]; then
+if [[ -n "$credential_source" ]]; then
+    IFS=$'\t' read -r credential_server helper <<<"$credential_source"
     credential_helper="docker-credential-$helper"
     command -v "$credential_helper" >/dev/null 2>&1 || \
-        fail "Error: Docker credential helper $credential_helper was not found." 3
+        die "Docker credential helper $credential_helper was not found." 3
 
-    if ! credentials="$(printf '%s' "$registry" | "$credential_helper" get 2>/dev/null)"; then
-        fail "Docker Hub credentials are not configured; run docker login."
+    if ! credentials="$(printf '%s' "$credential_server" | "$credential_helper" get 2>/dev/null)"; then
+        die "Docker Hub credentials are not configured; run docker login."
     fi
-    username="$(jq -r '.Username // empty' <<<"$credentials")"
-    secret="$(jq -r '.Secret // empty' <<<"$credentials")"
+    if ! username="$(jq -r '.Username // empty' <<<"$credentials")" ||
+        ! secret="$(jq -r '.Secret // empty' <<<"$credentials")"; then
+        die "Docker credential helper returned invalid credentials." 3
+    fi
 else
-    encoded="$(
+    if ! encoded="$(
         jq -r --arg registry "$registry" '
             .auths[$registry].auth
             // .auths["registry-1.docker.io"].auth
             // .auths["docker.io"].auth
             // empty
         ' "$docker_config"
-    )"
+    )"; then
+        die "Unable to read Docker configuration: $docker_config" 3
+    fi
     [[ -n "$encoded" ]] || \
-        fail "Docker Hub credentials are not configured; run docker login."
-    decoded="$(jq -Rr '@base64d' <<<"$encoded")" || \
-        fail "Error: invalid Docker Hub credentials in $docker_config." 3
+        die "Docker Hub credentials are not configured; run docker login."
+    if ! decoded="$(jq -Rr '@base64d' <<<"$encoded")"; then
+        die "Invalid Docker Hub credentials in $docker_config." 3
+    fi
     [[ "$decoded" == *:* ]] || \
-        fail "Error: invalid Docker Hub credentials in $docker_config." 3
+        die "Invalid Docker Hub credentials in $docker_config." 3
     username="${decoded%%:*}"
     secret="${decoded#*:}"
 fi
 
 if [[ -z "$username" || -z "$secret" ]]; then
-    fail "Docker Hub credentials are not configured; run docker login."
+    die "Docker Hub credentials are not configured; run docker login."
 fi
 
+if [[ "$username" == *$'\n'* || "$username" == *$'\r'* ||
+    "$secret" == *$'\n'* || "$secret" == *$'\r'* ]]; then
+    die "Docker Hub credentials contain unsupported line breaks." 3
+fi
+
+curl_credentials="$username:$secret"
+curl_credentials="${curl_credentials//\\/\\\\}"
+curl_credentials="${curl_credentials//\"/\\\"}"
+
 if ! result="$(
-    printf 'user = "%s:%s"\n' "$username" "$secret" |
+    printf 'user = "%s"\n' "$curl_credentials" |
         curl --config - \
             --silent \
             --show-error \
@@ -98,21 +119,22 @@ if ! result="$(
             --write-out $'\n%{http_code}' \
             'https://auth.docker.io/token'
 )"; then
-    fail "Error: unable to contact Docker Hub." 3
+    die "Unable to contact Docker Hub." 3
 fi
 
 http_status="${result##*$'\n'}"
 response="${result%$'\n'*}"
 
 if [[ "$http_status" == 401 || "$http_status" == 403 ]]; then
-    fail "Docker Hub credentials are invalid or do not grant access."
+    die "Docker Hub credentials are invalid or do not grant access."
 elif [[ "$http_status" != 200 ]]; then
-    fail "Error: Docker Hub access check returned HTTP $http_status." 3
+    die "Docker Hub access check returned HTTP $http_status." 3
 fi
 
-token="$(jq -r '.token // .access_token // empty' <<<"$response")" || \
-    fail "Error: Docker Hub returned an invalid access token." 3
-[[ -n "$token" ]] || fail "Error: Docker Hub returned an invalid access token." 3
+if ! token="$(jq -r '.token // .access_token // empty' <<<"$response")" ||
+    [[ -z "$token" || "$token" != *.*.* ]]; then
+    die "Docker Hub returned an invalid access token." 3
+fi
 
 payload="${token#*.}"
 payload="${payload%%.*}"
@@ -122,8 +144,10 @@ while (( ${#payload} % 4 != 0 )); do
     payload+="="
 done
 
-claims="$(jq -Rr '@base64d' <<<"$payload")" || \
-    fail "Error: unable to inspect the Docker Hub access token." 3
+if ! claims="$(jq -Rr '@base64d' <<<"$payload")" ||
+    ! jq -e 'type == "object"' >/dev/null <<<"$claims"; then
+    die "Unable to inspect the Docker Hub access token." 3
+fi
 
 if jq -e --arg repository "$repository" '
     .access[]?
@@ -137,4 +161,4 @@ if jq -e --arg repository "$repository" '
     exit 0
 fi
 
-fail "Docker Hub push access is not available for $repository."
+die "Docker Hub push access is not available for $repository."
