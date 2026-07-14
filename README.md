@@ -50,9 +50,3 @@ To build and push the image even when it already exists, add `--overwrite`:
 ```bash
 ./scripts/create.sh <image> <tag> --overwrite
 ```
-
-For example, to create or retrieve CUDA version 1:
-
-```bash
-./scripts/create.sh cuda v1
-```
