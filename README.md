@@ -1,7 +1,6 @@
 # HeartPrime Docker images
 
-This repository provides HeartPrime images published in the
-[`heartprime`](https://hub.docker.com/u/heartprime) Docker Hub namespace.
+This repository provides HeartPrime images published [`heartprime`](https://hub.docker.com/u/heartprime) Docker Hub account.
 
 ## Available images and tags
 
@@ -17,12 +16,14 @@ Before getting an image, make sure:
 
 - Docker is installed and the Docker engine is running.
 - The Docker Buildx plugin is available. Check with `docker buildx version`.
-- Your Docker Hub account has permission to push to the `heartprime` namespace
-  if the image needs to be built and published.
+- Your Docker Hub account has permission to push to the relevant repositories
+  owned by the `heartprime` account if the image needs to be built and
+  published.
 
 ### Log in to Docker Hub
 
-Log in with a Docker Hub account that has access to the `heartprime` namespace:
+Log in with a Docker Hub account that has push access to the required
+repositories in the `heartprime` account:
 
 ```bash
 docker login --username <docker-hub-username>
