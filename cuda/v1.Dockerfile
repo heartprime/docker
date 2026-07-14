@@ -1,4 +1,4 @@
-FROM nvidia/cuda:13.2.1-base-ubuntu24.04
+FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -6,6 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    NVIDIA_VISIBLE_DEVICES=all \
+    NVIDIA_DRIVER_CAPABILITIES=compute,utility \
     PATH=/opt/venv/bin:$PATH
 
 RUN apt-get update \
@@ -20,8 +22,8 @@ RUN apt-get update \
 RUN python3 -m venv /opt/venv \
     && python3 -m pip install --upgrade pip setuptools wheel \
     && python3 -m pip install \
-        torch==2.13.0+cu132 \
-        --index-url https://download.pytorch.org/whl/cu132 \
+        torch==2.13.0+cu126 \
+        --index-url https://download.pytorch.org/whl/cu126 \
     && python3 -m pip install \
         datajoint[postgres]==2.3.0 \
         graphviz==0.21 \

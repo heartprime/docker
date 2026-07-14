@@ -36,12 +36,12 @@ cd /path/to/docker
 For example:
 
 ```bash
-./build-and-push.sh cudalab v1
+./build-and-push.sh cuda v1
 ```
 
 The script builds the image for the Docker engine's native platform and pushes
-it to Docker Hub. In the example above, it uses `cudalab/v1.Dockerfile` and
-pushes the resulting image as `heartprime/cudalab:v1`.
+it to Docker Hub. In the example above, it uses `cuda/v1.Dockerfile` and
+pushes the resulting image as `heartprime/cuda:v1`.
 
 ## Repository layout
 
@@ -55,4 +55,4 @@ The currently available image and tag are:
 
 | Image | Tag |
 | --- | --- |
-| `cudalab` | `v1` |
+| `cuda` | `v1` |
