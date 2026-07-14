@@ -1,14 +1,21 @@
-# HeartPrime Docker images
+# HeartPrime Docker Images
 
-HeartPrime images are published on [Docker Hub](https://hub.docker.com/u/heartprime).
+HeartPrime Docker images are published to the
+[HeartPrime organization on Docker Hub](https://hub.docker.com/u/heartprime).
 
 ## Available images
 
-| Image | Tag | Docker image |
+| Image | Tag | Repository |
 | --- | --- | --- |
 | `cuda` | `v1` | `heartprime/cuda:v1` |
 
-## Get an image
+## Requirements
+
+- A running Docker engine
+- The Docker Buildx plugin
+- `curl` and `jq` (required only when publishing an image)
+
+## Get an Image
 
 From the `docker` directory, run:
 
@@ -22,31 +29,30 @@ For example:
 ./scripts/get.sh cuda v1
 ```
 
-If the image is published, the script pulls it from Docker Hub. After the
-script succeeds, `heartprime/<image>:<tag>` is available locally.
+The script pulls an existing image or builds and publishes a missing image,
+depending on its availability and your Docker Hub access. After it finishes,
+`heartprime/<image>:<tag>` is available locally for the host architecture.
 
-## Build or replace an image
+## Script Behavior
 
-Building and publishing is intended for maintainers with push access to the
-HeartPrime Docker Hub repository. The script chooses an action based on the
-image's current state:
+| Image state | Command | Result | Push access required? |
+| --- | --- | --- | --- |
+| Published | `./scripts/get.sh <image> <tag>` | Pulls the image | No |
+| Unpublished | `./scripts/get.sh <image> <tag>` | Builds, loads, and publishes the image | Yes |
+| Any | `./scripts/get.sh <image> <tag> --overwrite` | Rebuilds, loads, and publishes the image | Yes |
 
-| Image state | Command | Action |
-| --- | --- | --- |
-| Published | `./scripts/get.sh <image> <tag>` | Pull the image. |
-| Not published | `./scripts/get.sh <image> <tag>` | Build it, load it locally, and publish it. |
-| Published or unpublished | `./scripts/get.sh <image> <tag> --overwrite` | Build it, load it locally, and publish or replace it. |
+Images are built for the Docker engine's native Linux platform. After a
+successful build and push, the script removes its temporary Buildx builder and
+build cache. If a build or push fails, it retains both for the next attempt.
 
-The build uses the Docker engine's native platform. Building an unpublished
-image and using `--overwrite` both require Docker Hub push access.
+## Publish to Docker Hub
 
-### Log in to Docker Hub
-
-Use an account with push access to the HeartPrime repository:
+Publishing or replacing an image requires push access to the corresponding
+HeartPrime repository. Log in with an authorized Docker Hub account:
 
 ```bash
 docker login --username <docker-hub-username>
 ```
 
-When prompted for a password, use a Docker Hub personal access token. Do not
-put the token directly in the command.
+When prompted for a password, enter a Docker Hub personal access token. Do not
+include the token directly in the command.
