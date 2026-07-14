@@ -42,20 +42,24 @@ valid_script="$script_dir/valid.sh"
 exists_script="$script_dir/exists.sh"
 dockerfile="$repo_dir/dockerfiles/$image/$tag.Dockerfile"
 destination="heartprime/$image:$tag"
-builder_name="heartprime-build-$$-$RANDOM"
-builder_created=false
+builder_name=""
+builder_available=false
+build_succeeded=false
 
 cleanup() {
     local exit_status=$?
 
     trap - EXIT INT TERM
 
-    if [[ "$builder_created" == true ]]; then
-        printf 'Removing temporary builder and build cache...\n'
+    if [[ "$builder_available" == true && "$build_succeeded" == true ]]; then
+        printf 'Removing builder and build cache after successful build...\n'
         if ! docker buildx rm --force "$builder_name" >/dev/null 2>&1; then
-            printf 'Warning: failed to remove temporary builder %s.\n' \
+            printf 'Warning: failed to remove builder %s.\n' \
                 "$builder_name" >&2
         fi
+    elif [[ "$builder_available" == true ]]; then
+        printf 'Retaining builder %s and its cache for the next attempt.\n' \
+            "$builder_name"
     fi
 
     exit "$exit_status"
@@ -101,12 +105,18 @@ if ! native_platform="$(
     die "Unable to determine the Docker engine's native platform."
 fi
 
-docker buildx create \
-    --name "$builder_name" \
-    --driver docker-container \
-    --platform "$native_platform" \
-    >/dev/null
-builder_created=true
+builder_name="heartprime-build-${image}-${tag}-${native_platform//\//-}"
+
+if docker buildx inspect "$builder_name" >/dev/null 2>&1; then
+    printf 'Reusing builder %s and its cached layers.\n' "$builder_name"
+else
+    docker buildx create \
+        --name "$builder_name" \
+        --driver docker-container \
+        --platform "$native_platform" \
+        >/dev/null
+fi
+builder_available=true
 
 printf 'Building %s for native platform %s and pushing it to Docker Hub...\n' \
     "$destination" "$native_platform"
@@ -117,3 +127,4 @@ docker buildx build \
     --tag "$destination" \
     --push \
     "$repo_dir"
+build_succeeded=true

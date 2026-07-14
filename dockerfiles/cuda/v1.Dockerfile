@@ -17,11 +17,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv /opt/venv \
-    && /opt/venv/bin/python -m pip install --upgrade pip setuptools wheel \
-    && /opt/venv/bin/python -m pip install \
+    && /opt/venv/bin/python -m pip install --upgrade pip setuptools wheel
+
+RUN /opt/venv/bin/python -m pip install \
         torch==2.13.0+cu126 \
-        --index-url https://download.pytorch.org/whl/cu126 \
-    && /opt/venv/bin/python -m pip install \
+        --index-url https://download.pytorch.org/whl/cu126
+
+RUN /opt/venv/bin/python -m pip install \
         datajoint[postgres]==2.3.0 \
         graphviz==0.21 \
         jupyterlab==4.6.1 \
@@ -33,7 +35,7 @@ RUN python3 -m venv /opt/venv \
         seaborn==0.13.2 \
         statsmodels==0.14.6 \
         umap-learn==0.5.12 \
-        zarr==3.2.1
+        zarr==3.1.6
 
 RUN mkdir -p /workspace
 
