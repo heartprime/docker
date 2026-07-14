@@ -1,40 +1,26 @@
 # HeartPrime Docker images
 
-This repository provides HeartPrime images published [`heartprime`](https://hub.docker.com/u/heartprime) Docker Hub account.
+HeartPrime images are published on [Docker Hub](https://hub.docker.com/u/heartprime).
 
-## Available images and tags
+## Available images
 
-| Image | Tag | Full name |
+| Image | Tag | Docker image |
 | --- | --- | --- |
 | `cuda` | `v1` | `heartprime/cuda:v1` |
 
-## Usage
+## Log in to Docker Hub (optional)
 
-### Prerequisites
-
-Before getting an image, make sure:
-
-- Docker is installed and the Docker engine is running.
-- The Docker Buildx plugin is available. Check with `docker buildx version`.
-- If you need to build and publish an image that is not already on Docker Hub,
-  `curl`, `jq`, and a Docker Hub account with push permission for the relevant
-  repository owned by the `heartprime` account.
-
-### Log in to Docker Hub (optional)
-
-You do not need to log in to pull an image that is already published. Log in
-only when building and publishing an image that does not exist on Docker Hub,
-or when replacing an existing image with `--overwrite`. Use an account that
-has push access to the required repository in the `heartprime` account:
+Login is only required to publish a new image or replace an existing image with
+`--overwrite`. Use an account with push access to the HeartPrime repository:
 
 ```bash
 docker login --username <docker-hub-username>
 ```
 
-When prompted for a password, use a Docker Hub personal access token. Do not
-put a password or token directly on the command line.
+Use a Docker Hub personal access token when prompted for a password. Do not put
+the token directly in the command.
 
-### Get an image
+## Get an image
 
 From the `docker` directory, run:
 
@@ -42,14 +28,18 @@ From the `docker` directory, run:
 ./scripts/get.sh <image> <tag>
 ```
 
-When the command finishes, `heartprime/<image>:<tag>` is available in your
-local Docker image store. Existing images are pulled without requiring Docker
-Hub credentials. If the image is not already published, the command verifies
-push access to `heartprime/<image>` before building it and publishing it.
-
-To recreate an existing image and publish the replacement, log in to Docker
-Hub as described above and add `--overwrite`:
+To rebuild and replace an existing image, run:
 
 ```bash
 ./scripts/get.sh <image> <tag> --overwrite
 ```
+
+The script:
+
+- pulls the image from Docker Hub when it is already published; or
+- builds the image, stores it locally, and publishes it when it does not exist.
+
+With `--overwrite`, the script rebuilds the image and replaces the published
+version.
+
+After the script succeeds, `heartprime/<image>:<tag>` is available locally.
