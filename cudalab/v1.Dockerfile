@@ -23,11 +23,13 @@ RUN python3 -m venv /opt/venv \
         torch==2.13.0+cu132 \
         --index-url https://download.pytorch.org/whl/cu132 \
     && python3 -m pip install \
-        datajoint==2.2.4 \
+        datajoint[postgres]==2.3.0 \
+        graphviz==0.21 \
         jupyterlab==4.6.1 \
         matplotlib==3.11.0 \
-        numpy==2.4.6 \
+        numpy==2.5.1 \
         pandas==3.0.3 \
+        polars==1.42.1 \
         scikit-learn==1.9.0 \
         seaborn==0.13.2 \
         statsmodels==0.14.6 \
