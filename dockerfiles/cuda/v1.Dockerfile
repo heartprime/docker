@@ -8,11 +8,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     NVIDIA_VISIBLE_DEVICES=all \
     NVIDIA_DRIVER_CAPABILITIES=compute,utility \
+    SHELL=/bin/bash \
     PATH=/opt/venv/bin:$PATH
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
         ca-certificates \
+        bash \
         git \
     && rm -rf /var/lib/apt/lists/*
 
