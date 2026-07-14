@@ -36,7 +36,7 @@ put a password or token directly on the command line.
 From the `docker` directory, run:
 
 ```bash
-./scripts/create.sh <image> <tag>
+./scripts/get.sh <image> <tag>
 ```
 
 When the command finishes, `heartprime/<image>:<tag>` is available in your
@@ -46,5 +46,5 @@ created and published to Docker Hub.
 To recreate an existing image and publish the replacement, add `--overwrite`:
 
 ```bash
-./scripts/create.sh <image> <tag> --overwrite
+./scripts/get.sh <image> <tag> --overwrite
 ```

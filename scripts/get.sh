@@ -3,8 +3,8 @@
 # Build or retrieve a HeartPrime image for the host architecture.
 #
 # Usage:
-#   ./create.sh <image> <tag>
-#   ./create.sh <image> <tag> --overwrite
+#   ./get.sh <image> <tag>
+#   ./get.sh <image> <tag> --overwrite
 #
 # If the tagged image exists, it is pulled unless --overwrite is specified. If
 # it does not exist, it is built and pushed.
