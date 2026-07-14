@@ -1,7 +1,7 @@
 # HeartPrime Docker Images
 
 HeartPrime Docker images are published to the
-[HeartPrime organization on Docker Hub](https://hub.docker.com/u/heartprime).
+[HeartPrime account on Docker Hub](https://hub.docker.com/u/heartprime).
 
 ## Available images
 
