@@ -16,14 +16,16 @@ Before getting an image, make sure:
 
 - Docker is installed and the Docker engine is running.
 - The Docker Buildx plugin is available. Check with `docker buildx version`.
-- Your Docker Hub account has permission to push to the relevant repositories
-  owned by the `heartprime` account if the image needs to be built and
-  published.
+- If you need to build and publish an image that is not already on Docker Hub,
+  `curl`, `jq`, and a Docker Hub account with push permission for the relevant
+  repository owned by the `heartprime` account.
 
-### Log in to Docker Hub
+### Log in to Docker Hub (optional)
 
-Log in with a Docker Hub account that has push access to the required
-repositories in the `heartprime` account:
+You do not need to log in to pull an image that is already published. Log in
+only when building and publishing an image that does not exist on Docker Hub,
+or when replacing an existing image with `--overwrite`. Use an account that
+has push access to the required repository in the `heartprime` account:
 
 ```bash
 docker login --username <docker-hub-username>
@@ -41,10 +43,12 @@ From the `docker` directory, run:
 ```
 
 When the command finishes, `heartprime/<image>:<tag>` is available in your
-local Docker image store. If the image was not already published, it is also
-created and published to Docker Hub.
+local Docker image store. Existing images are pulled without requiring Docker
+Hub credentials. If the image is not already published, the command verifies
+push access to `heartprime/<image>` before building it and publishing it.
 
-To recreate an existing image and publish the replacement, add `--overwrite`:
+To recreate an existing image and publish the replacement, log in to Docker
+Hub as described above and add `--overwrite`:
 
 ```bash
 ./scripts/get.sh <image> <tag> --overwrite

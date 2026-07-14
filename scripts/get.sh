@@ -6,8 +6,8 @@
 #   ./get.sh <image> <tag>
 #   ./get.sh <image> <tag> --overwrite
 #
-# If the tagged image exists, it is pulled unless --overwrite is specified. If
-# it does not exist, it is built and pushed.
+# If the tagged image exists, it is pulled unless --overwrite is specified. A
+# build is performed and pushed only when Docker Hub push access is available.
 
 set -euo pipefail
 
@@ -40,6 +40,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_dir="$(cd "$script_dir/.." && pwd)"
 valid_script="$script_dir/valid.sh"
 exists_script="$script_dir/exists.sh"
+access_script="$script_dir/access.sh"
 dockerfile="$repo_dir/dockerfiles/$image/$tag.Dockerfile"
 destination="heartprime/$image:$tag"
 builder_name=""
@@ -93,6 +94,23 @@ if [[ "$image_exists" == true && "$overwrite" == false ]]; then
     printf 'Pulling %s from Docker Hub...\n' "$destination"
     docker pull "$destination"
     exit 0
+fi
+
+if [[ ! -x "$access_script" ]]; then
+    die "Docker Hub access check is not executable: $access_script"
+fi
+
+if "$access_script" "$image"; then
+    :
+else
+    access_status=$?
+    if [[ $access_status -eq 1 ]]; then
+        if [[ "$overwrite" == true ]]; then
+            die "Cannot overwrite $destination without Docker Hub push access. Log in with an authorized account and try again."
+        fi
+        die "$destination is not published and cannot be built without Docker Hub push access. Log in with an authorized account and try again."
+    fi
+    die "Unable to check Docker Hub push access for heartprime/$image." "$access_status"
 fi
 
 if [[ ! -f "$dockerfile" ]]; then
