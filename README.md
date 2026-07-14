@@ -1,12 +1,11 @@
 # HeartPrime Docker images
 
-This directory contains the Dockerfiles and scripts used to retrieve or build
-images published in the [`heartprime`](https://hub.docker.com/u/heartprime)
-Docker Hub namespace.
+This directory provides HeartPrime images published in the
+[`heartprime`](https://hub.docker.com/u/heartprime) Docker Hub namespace.
 
 ## Available images and tags
 
-| Image | Tag | Image Name |
+| Image | Tag | Full name |
 | --- | --- | --- |
 | `cuda` | `v1` | `heartprime/cuda:v1` |
 
@@ -14,7 +13,7 @@ Docker Hub namespace.
 
 ### Prerequisites
 
-Before creating an image, make sure:
+Before getting an image, make sure:
 
 - Docker is installed and the Docker engine is running.
 - The Docker Buildx plugin is available. Check with `docker buildx version`.
@@ -32,22 +31,19 @@ docker login --username <docker-hub-username>
 When prompted for a password, use a Docker Hub personal access token. Do not
 put a password or token directly on the command line.
 
-### Create docker image
+### Get an image
 
-From this `docker` directory, create or retrieve an image with:
+From the `docker` directory, run:
 
 ```bash
 ./scripts/create.sh <image> <tag>
 ```
 
-The script checks for `heartprime/<image>:<tag>` on Docker Hub for the host
-architecture. If it exists, the script pulls the image from Docker Hub. If it
-does not exist, the script builds `dockerfiles/<image>/<tag>.Dockerfile` for the
-Docker engine's native platform, loads it into the local Docker image store,
-and pushes it. The builder cache is removed after a successful push without
-removing the loaded image.
+When the command finishes, `heartprime/<image>:<tag>` is available in your
+local Docker image store. If the image was not already published, it is also
+created and published to Docker Hub.
 
-To build and push the image even when it already exists, add `--overwrite`:
+To recreate an existing image and publish the replacement, add `--overwrite`:
 
 ```bash
 ./scripts/create.sh <image> <tag> --overwrite
