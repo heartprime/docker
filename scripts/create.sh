@@ -118,13 +118,16 @@ else
 fi
 builder_available=true
 
-printf 'Building %s for native platform %s and pushing it to Docker Hub...\n' \
+printf 'Building %s for native platform %s and loading it locally...\n' \
     "$destination" "$native_platform"
 docker buildx build \
     --builder "$builder_name" \
     --platform "$native_platform" \
     --file "$dockerfile" \
     --tag "$destination" \
-    --push \
+    --load \
     "$repo_dir"
+
+printf 'Pushing %s to Docker Hub...\n' "$destination"
+docker push "$destination"
 build_succeeded=true

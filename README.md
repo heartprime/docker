@@ -43,7 +43,9 @@ From this `docker` directory, create or retrieve an image with:
 The script checks for `heartprime/<image>:<tag>` on Docker Hub for the host
 architecture. If it exists, the script pulls the image from Docker Hub. If it
 does not exist, the script builds `dockerfiles/<image>/<tag>.Dockerfile` for the
-Docker engine's native platform and pushes the image.
+Docker engine's native platform, loads it into the local Docker image store,
+and pushes it. The builder cache is removed after a successful push without
+removing the loaded image.
 
 To build and push the image even when it already exists, add `--overwrite`:
 
