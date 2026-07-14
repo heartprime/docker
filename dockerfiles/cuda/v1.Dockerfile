@@ -26,7 +26,7 @@ RUN python3 -m venv /opt/venv \
         graphviz==0.21 \
         jupyterlab==4.6.1 \
         matplotlib==3.11.0 \
-        numpy==2.5.1 \
+        numpy==2.4.6 \
         pandas==3.0.3 \
         polars==1.42.1 \
         scikit-learn==1.9.0 \
