@@ -20,7 +20,7 @@ HeartPrime Docker images are published to the
 From the `docker` directory, run:
 
 ```bash
-./scripts/get.sh <image> <tag>
+./scripts/get.sh <image> <tag> [--rebuild]
 ```
 
 For example:
@@ -29,17 +29,19 @@ For example:
 ./scripts/get.sh cuda v1
 ```
 
+Add `--rebuild` to rebuild and publish the image even if it already exists.
+
 The script pulls an existing image or builds and publishes a missing image,
 depending on its availability and your Docker Hub access. After it finishes,
 `heartprime/<image>:<tag>` is available locally for the host architecture.
 
 ## Script Behavior
 
-| Command | Image state | Result | Push access required? |
-| --- | --- | --- | --- |
-| <nobr>`./scripts/get.sh <image> <tag>`</nobr> | Published | Pulls the image | No |
-| <nobr>`./scripts/get.sh <image> <tag>`</nobr> | Unpublished | Builds and publishes the image | Yes |
-| <nobr>`./scripts/get.sh <image> <tag> --rebuild`</nobr> | Any | Rebuilds and publishes the image | Yes |
+| Condition | Result | Push access required? |
+| --- | --- | --- |
+| Image is published | Pulls the image | No |
+| Image is unpublished | Builds and publishes the image | Yes |
+| Rebuild requested | Rebuilds and publishes the image | Yes |
 
 Images are pulled or built for the Docker engine's native Linux platform.
 
