@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# Check whether heartprime/<image>:<tag> exists on Docker Hub for the host's
+# Linux CPU architecture (amd64 or arm64).
+#
+# Usage: ./exists.sh <image> <tag>
+# Example: ./exists.sh cuda v1
+#
+# Exits with 0 when the platform-specific image exists, 1 when it does not,
+# and 2 when the arguments are invalid.
+
 set -euo pipefail
 
 usage() {
