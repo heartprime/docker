@@ -4,15 +4,15 @@
 #
 # Usage:
 #   ./get.sh <image> <tag>
-#   ./get.sh <image> <tag> --overwrite
+#   ./get.sh <image> <tag> --rebuild
 #
-# If the tagged image exists, it is pulled unless --overwrite is specified. A
+# If the tagged image exists, it is pulled unless --rebuild is specified. A
 # build is performed and pushed only when Docker Hub push access is available.
 
 set -euo pipefail
 
 usage() {
-    printf 'Usage: %s <image> <tag> [--overwrite]\n' "${0##*/}" >&2
+    printf 'Usage: %s <image> <tag> [--rebuild]\n' "${0##*/}" >&2
 }
 
 die() {
@@ -27,13 +27,13 @@ fi
 
 image="$1"
 tag="$2"
-overwrite=false
+rebuild=false
 
 if [[ $# -eq 3 ]]; then
-    if [[ "$3" != "--overwrite" ]]; then
+    if [[ "$3" != "--rebuild" ]]; then
         die "Unknown option: $3" 2
     fi
-    overwrite=true
+    rebuild=true
 fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -90,7 +90,7 @@ else
     image_exists=false
 fi
 
-if [[ "$image_exists" == true && "$overwrite" == false ]]; then
+if [[ "$image_exists" == true && "$rebuild" == false ]]; then
     printf 'Pulling %s from Docker Hub...\n' "$destination"
     docker pull "$destination"
     exit 0
@@ -105,8 +105,8 @@ if "$access_script" "$image"; then
 else
     access_status=$?
     if [[ $access_status -eq 1 ]]; then
-        if [[ "$overwrite" == true ]]; then
-            die "Cannot overwrite $destination without Docker Hub push access. Log in with an authorized account and try again."
+        if [[ "$rebuild" == true ]]; then
+            die "Cannot rebuild $destination without Docker Hub push access. Log in with an authorized account and try again."
         fi
         die "$destination is not published and cannot be built without Docker Hub push access. Log in with an authorized account and try again."
     fi

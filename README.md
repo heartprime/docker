@@ -35,17 +35,15 @@ depending on its availability and your Docker Hub access. After it finishes,
 
 ## Script Behavior
 
-| Image state | Command | Result | Push access required? |
+| Command | Image state | Result | Push access required? |
 | --- | --- | --- | --- |
-| Published | `./scripts/get.sh <image> <tag>` | Pulls the image | No |
-| Unpublished | `./scripts/get.sh <image> <tag>` | Builds, loads, and publishes the image | Yes |
-| Any | `./scripts/get.sh <image> <tag> --overwrite` | Rebuilds, loads, and publishes the image | Yes |
+| `./scripts/get.sh <image> <tag>` | Published | Pulls the image | No |
+| `./scripts/get.sh <image> <tag>` | Unpublished | Builds and publishes the image | Yes |
+| `./scripts/get.sh <image> <tag> --rebuild` | Any | Rebuilds and publishes the image | Yes |
 
-Images are built for the Docker engine's native Linux platform. After a
-successful build and push, the script removes its temporary Buildx builder and
-build cache. If a build or push fails, it retains both for the next attempt.
+Images are pulled or built for the Docker engine's native Linux platform.
 
-## Publish to Docker Hub
+## Log In for Push Access
 
 Publishing or replacing an image requires push access to the corresponding
 HeartPrime repository. Log in with an authorized Docker Hub account:
