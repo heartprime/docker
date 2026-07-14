@@ -8,18 +8,6 @@ HeartPrime images are published on [Docker Hub](https://hub.docker.com/u/heartpr
 | --- | --- | --- |
 | `cuda` | `v1` | `heartprime/cuda:v1` |
 
-## Log in to Docker Hub (optional)
-
-Login is only required to publish a new image or replace an existing image with
-`--overwrite`. Use an account with push access to the HeartPrime repository:
-
-```bash
-docker login --username <docker-hub-username>
-```
-
-Use a Docker Hub personal access token when prompted for a password. Do not put
-the token directly in the command.
-
 ## Get an image
 
 From the `docker` directory, run:
@@ -28,18 +16,37 @@ From the `docker` directory, run:
 ./scripts/get.sh <image> <tag>
 ```
 
-To rebuild and replace an existing image, run:
+For example:
 
 ```bash
-./scripts/get.sh <image> <tag> --overwrite
+./scripts/get.sh cuda v1
 ```
 
-The script:
+If the image is published, the script pulls it from Docker Hub. After the
+script succeeds, `heartprime/<image>:<tag>` is available locally.
 
-- pulls the image from Docker Hub when it is already published; or
-- builds the image, stores it locally, and publishes it when it does not exist.
+## Build or replace an image
 
-With `--overwrite`, the script rebuilds the image and replaces the published
-version.
+Building and publishing is intended for maintainers with push access to the
+HeartPrime Docker Hub repository. The script chooses an action based on the
+image's current state:
 
-After the script succeeds, `heartprime/<image>:<tag>` is available locally.
+| Image state | Command | Action |
+| --- | --- | --- |
+| Published | `./scripts/get.sh <image> <tag>` | Pull the image. |
+| Not published | `./scripts/get.sh <image> <tag>` | Build it, load it locally, and publish it. |
+| Published or unpublished | `./scripts/get.sh <image> <tag> --overwrite` | Build it, load it locally, and publish or replace it. |
+
+The build uses the Docker engine's native platform. Building an unpublished
+image and using `--overwrite` both require Docker Hub push access.
+
+### Log in to Docker Hub
+
+Use an account with push access to the HeartPrime repository:
+
+```bash
+docker login --username <docker-hub-username>
+```
+
+When prompted for a password, use a Docker Hub personal access token. Do not
+put the token directly in the command.
