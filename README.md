@@ -1,6 +1,6 @@
 # HeartPrime Docker images
 
-This directory provides HeartPrime images published in the
+This repository provides HeartPrime images published in the
 [`heartprime`](https://hub.docker.com/u/heartprime) Docker Hub namespace.
 
 ## Available images and tags
