@@ -7,7 +7,8 @@ HeartPrime Docker images are published to the
 
 | Image | Tag | Repository |
 | --- | --- | --- |
-| `cuda` | `v1` | `heartprime/cuda:v1` |
+| `v1` | `cpu` | `heartprime/v1:cpu` |
+| `v1` | `cuda` | `heartprime/v1:cuda` |
 
 ## Requirements
 
@@ -15,18 +16,18 @@ HeartPrime Docker images are published to the
 - The Docker Buildx plugin
 - `curl` and `jq` (required only when publishing an image)
 
-## Get an Image
+## Instantiate an Image
 
 From the `docker` directory, run:
 
 ```bash
-./scripts/get.sh <image> <tag> [--rebuild]
+./image.sh <image> <tag> [--rebuild]
 ```
 
 For example:
 
 ```bash
-./scripts/get.sh cuda v1
+./image.sh v1 cuda
 ```
 
 Add `--rebuild` to rebuild and publish the image even if it already exists.

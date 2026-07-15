@@ -3,8 +3,8 @@
 # Build or retrieve a HeartPrime image for the host architecture.
 #
 # Usage:
-#   ./get.sh <image> <tag>
-#   ./get.sh <image> <tag> --rebuild
+#   ./image.sh <image> <tag>
+#   ./image.sh <image> <tag> --rebuild
 #
 # If the tagged image exists, it is pulled unless --rebuild is specified. A
 # build is performed and pushed only when Docker Hub push access is available.
@@ -37,10 +37,10 @@ if [[ $# -eq 3 ]]; then
 fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-repo_dir="$(cd "$script_dir/.." && pwd)"
-valid_script="$script_dir/valid.sh"
-exists_script="$script_dir/exists.sh"
-access_script="$script_dir/access.sh"
+repo_dir="$script_dir"
+valid_script="$script_dir/scripts/valid.sh"
+exists_script="$script_dir/scripts/exists.sh"
+access_script="$script_dir/scripts/access.sh"
 dockerfile="$repo_dir/dockerfiles/$image/$tag.Dockerfile"
 destination="heartprime/$image:$tag"
 builder_name=""
