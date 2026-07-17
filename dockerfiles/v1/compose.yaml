@@ -7,7 +7,7 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ./workspace:/workspace
+      - ~/workspace:/workspace
 
   cuda:
     image: heartprime/v1:cuda
@@ -17,5 +17,5 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ./workspace:/workspace
+      - ~/workspace:/workspace
     gpus: all
