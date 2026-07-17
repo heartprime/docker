@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm
+FROM python:3.14.6-slim-bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -26,7 +26,7 @@ RUN /opt/venv/bin/python -m pip install \
         --index-url https://download.pytorch.org/whl/cpu
 
 RUN /opt/venv/bin/python -m pip install \
-        datajoint[postgres,s3]==2.3.0 \
+        datajoint[postgres,s3]==2.3.1 \
         graphviz==0.21 \
         jupyterlab==4.6.1 \
         matplotlib==3.11.0 \
