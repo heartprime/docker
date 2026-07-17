@@ -1,0 +1,21 @@
+services:
+  cpu:
+    image: heartprime/v1:cpu
+    build:
+      context: .
+      dockerfile: cpu.Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./workspace:/workspace
+
+  cuda:
+    image: heartprime/v1:cuda
+    build:
+      context: .
+      dockerfile: cuda.Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./workspace:/workspace
+    gpus: all
