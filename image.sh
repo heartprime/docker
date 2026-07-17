@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Build or retrieve a HeartPrime image for the host architecture.
+# Build or retrieve a multi-platform HeartPrime image.
 #
 # Usage:
 #   ./image.sh <image> <tag>
@@ -123,7 +123,7 @@ if ! native_platform="$(
     die "Unable to determine the Docker engine's native platform."
 fi
 
-builder_name="heartprime-build-${image}-${tag}-${native_platform//\//-}"
+builder_name="heartprime-build-${image}-${tag}"
 
 if docker buildx inspect "$builder_name" >/dev/null 2>&1; then
     printf 'Reusing builder %s and its cached layers.\n' "$builder_name"
@@ -131,21 +131,21 @@ else
     docker buildx create \
         --name "$builder_name" \
         --driver docker-container \
-        --platform "$native_platform" \
         >/dev/null
 fi
 builder_available=true
 
-printf 'Building %s for native platform %s and loading it locally...\n' \
-    "$destination" "$native_platform"
+printf 'Building and pushing %s for linux/amd64 and linux/arm64...\n' \
+    "$destination"
 docker buildx build \
     --builder "$builder_name" \
-    --platform "$native_platform" \
+    --platform linux/amd64,linux/arm64 \
     --file "$dockerfile" \
     --tag "$destination" \
-    --load \
+    --push \
     "$repo_dir"
 
-printf 'Pushing %s to Docker Hub...\n' "$destination"
-docker push "$destination"
+printf 'Pulling native platform %s for %s...\n' \
+    "$native_platform" "$destination"
+docker pull --platform "$native_platform" "$destination"
 build_succeeded=true
