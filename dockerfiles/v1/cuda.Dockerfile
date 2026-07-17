@@ -8,8 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     NVIDIA_VISIBLE_DEVICES=all \
     NVIDIA_DRIVER_CAPABILITIES=compute,utility \
-    SHELL=/bin/bash \
-    PATH=/opt/venv/bin:$PATH
+    SHELL=/bin/bash
 
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
@@ -18,14 +17,13 @@ RUN apt-get update \
         git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m venv /opt/venv \
-    && /opt/venv/bin/python -m pip install --upgrade pip setuptools wheel
+RUN /usr/local/bin/python -m pip install --upgrade pip setuptools wheel
 
-RUN /opt/venv/bin/python -m pip install \
+RUN /usr/local/bin/python -m pip install \
         torch==2.13.0+cu126 \
         --index-url https://download.pytorch.org/whl/cu126
 
-RUN /opt/venv/bin/python -m pip install \
+RUN /usr/local/bin/python -m pip install \
         datajoint[postgres,s3]==2.3.1 \
         graphviz==0.21 \
         jupyterlab==4.6.1 \
@@ -46,4 +44,4 @@ WORKDIR /workspace
 
 EXPOSE 8888
 
-CMD ["jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--ServerApp.root_dir=/workspace"]
+CMD ["/usr/local/bin/jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--ServerApp.root_dir=/workspace"]
