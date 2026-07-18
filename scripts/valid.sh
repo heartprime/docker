@@ -37,7 +37,7 @@ fi
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_dir="$(cd "$script_dir/.." && pwd)"
-dockerfile="$repo_dir/dockerfiles/$image/$tag.Dockerfile"
+dockerfile="$repo_dir/images/$image/$tag.Dockerfile"
 
 if [[ -f "$dockerfile" ]]; then
     printf '%s:%s is valid.\n' "$image" "$tag"
