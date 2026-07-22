@@ -16,6 +16,12 @@ HeartPrime Docker images are published to the
 - The Docker Buildx plugin
 - `curl` and `jq` (required only when publishing an image)
 
+Installation guides:
+
+- [Ubuntu](docs/ubuntu.md)
+- [macOS](docs/macos.md)
+- [Windows](docs/windows.md)
+
 ## Instantiate an Image
 
 From the `docker` directory, run:
